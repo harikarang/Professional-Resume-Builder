@@ -1,1 +1,638 @@
-# my-webpage
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Resume Builder</title>
+    <!-- Chosen Palette: Calm Neutrals - Predominantly stone tones with teal accents. -->
+    <!-- Application Structure Plan: The SPA consists of a single form with clearly defined sections (Personal Details, Career Objective, Education, Experience, Skills, Strengths, Achievements, Languages, Declaration). This linear, form-based structure is chosen for its simplicity and directness, allowing users to input all required resume information sequentially. The output is a downloadable PDF, generated client-side, making the entire process self-contained and efficient. A new 'Referrals' section has been added before the Declaration. All major textarea input fields are now enclosed within distinct bordered boxes for better visual grouping and clarity. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation -> Interaction -> Justification. All content is collected via standard HTML form inputs (text, textarea, date). There are no complex visualizations within the form itself as the primary 'visualization' is the final PDF output. The interaction is focused on form submission triggering PDF generation. This simple, direct approach is justified by the clear user goal: building and downloading a resume. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #44403c; /* stone-700 */
+        }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="url"] {
+            @apply w-full p-3 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500;
+        }
+        textarea {
+             /* Remove default textarea styling that interferes with input-box */
+            border: none;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            resize: vertical; /* Allow vertical resizing */
+        }
+        label {
+            @apply block text-stone-700 font-medium mb-2;
+        }
+        .section-header {
+            @apply text-2xl font-bold text-stone-800 mb-6 border-b-2 border-teal-300 pb-2;
+        }
+        .input-box {
+            @apply bg-stone-50 p-4 rounded-lg shadow-sm border border-stone-200;
+        }
+    </style>
+</head>
+<body class="antialiased p-6 md:p-12">
+
+    <div class="max-w-4xl mx-auto bg-white p-8 md:p-10 rounded-lg shadow-xl">
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-stone-800 mb-8">Professional Resume Builder</h1>
+        <p class="text-center text-stone-600 mb-10">Fill in your details below to generate a professional PDF resume.</p>
+
+        <form id="resumeForm" class="space-y-10">
+
+            <!-- Personal Details -->
+            <section>
+                <h2 class="section-header">Personal Details</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="John Doe" value="Alex Doe" required>
+                    </div>
+                    <div>
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="john.doe@example.com" value="alex.doe@example.com" required>
+                    </div>
+                    <div>
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+123 456 7890" value="+91 98765 43210" required>
+                    </div>
+                    <div>
+                        <label for="linkedin">LinkedIn Profile URL (Optional)</label>
+                        <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile" value="https://linkedin.com/in/alexdoe">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="portfolio">Portfolio/GitHub URL (Optional)</label>
+                        <input type="url" id="portfolio" placeholder="https://github.com/yourusername" value="https://github.com/alexdoe">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Career Objective -->
+            <section>
+                <h2 class="section-header">Career Objective</h2>
+                <div class="input-box">
+                    <label for="objective">Your Career Objective</label>
+                    <textarea id="objective" rows="4" placeholder="To secure an entry-level position where I can apply my foundational business knowledge...">To secure an entry-level position where I can apply my foundational business knowledge gained through BBA and leverage my practical web development skills acquired during my internship. I am eager to contribute to a dynamic team, learn new technologies, and grow professionally while adding value to the organization.</textarea>
+                </div>
+            </section>
+
+            <!-- Education Qualification -->
+            <section>
+                <h2 class="section-header">Education Qualification</h2>
+                <div class="space-y-6">
+                    <!-- Higher Education -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-stone-700 mb-3">Higher Education (e.g., University/College Degree)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="degreeName">Degree/Qualification Name</label>
+                                <input type="text" id="degreeName" placeholder="Bachelor of Business Administration" value="Bachelor of Business Administration">
+                            </div>
+                             <div>
+                                <label for="majorSpecialization">Major/Specialization (Optional)</label>
+                                <input type="text" id="majorSpecialization" placeholder="e.g., Web Development, Finance" value="Business Analytics">
+                            </div>
+                            <div>
+                                <label for="university">University/College Name</label>
+                                <input type="text" id="university" placeholder="Your University/College Name" value="University of Business Studies">
+                            </div>
+                            <div>
+                                <label for="graduation">Expected/Year of Graduation (Month, Year)</label>
+                                <input type="text" id="graduation" placeholder="May, 2026" value="May, 2026">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="coursework">Relevant Coursework (Optional, comma-separated)</label>
+                                <input type="text" id="coursework" placeholder="Marketing, Human Resources, Business Analytics" value="Marketing, Human Resources, Business Analytics, Project Management">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 12th Grade -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-stone-700 mb-3">Higher Secondary Certificate (12th Grade)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="12thSchool">School Name</label>
+                                <input type="text" id="12thSchool" placeholder="Your School Name" value="Central High School">
+                            </div>
+                            <div>
+                                <label for="12thYear">Year of Completion</label>
+                                <input type="text" id="12thYear" placeholder="YYYY" value="2023">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="12thMarks">Aggregate Percentage/GPA</label>
+                                <input type="text" id="12thMarks" placeholder="e.g., 88%" value="88%">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 10th Grade -->
+                    <div>
+                        <h3 class="text-xl font-semibold text-stone-700 mb-3">Secondary School Certificate (10th Grade)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="10thSchool">School Name</label>
+                                <input type="text" id="10thSchool" placeholder="Your School Name" value="Central High School">
+                            </div>
+                            <div>
+                                <label for="10thYear">Year of Completion</label>
+                                <input type="text" id="10thYear" placeholder="YYYY" value="2021">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="10thMarks">Aggregate Percentage/GPA</label>
+                                <input type="text" id="10thMarks" placeholder="e.g., 92%" value="92%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Internship Experience -->
+            <section>
+                <h2 class="section-header">Internship Experience</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label for="internCompany">Company Name</label>
+                        <input type="text" id="internCompany" placeholder="CodeBehind Technology" value="CodeBehind Technology">
+                    </div>
+                    <div>
+                        <label for="internRole">Role</label>
+                        <input type="text" id="internRole" placeholder="Web Development Intern" value="Web Development Intern">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="internStart">Start Date</label>
+                            <input type="text" id="internStart" placeholder="June 2024" value="June 2024">
+                        </div>
+                        <div>
+                            <label for="internEnd">End Date</label>
+                            <input type="text" id="internEnd" placeholder="August 2024" value="August 2024">
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="internResponsibilities">Key Responsibilities (One per line)</label>
+                        <textarea id="internResponsibilities" rows="6" placeholder="Assisted in the development and maintenance of responsive web applications...">Assisted in the development and maintenance of responsive web applications using HTML, CSS, JavaScript.
+Collaborated with a team to implement new features and improve existing functionalities based on project requirements.
+Gained practical experience in front-end development principles and learned about the software development lifecycle.
+Assisted in debugging and troubleshooting web application issues to ensure smooth operation.
+Developed a foundational understanding of UI/UX design principles and version control with Git.</textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Skills -->
+            <section>
+                <h2 class="section-header">Technical Skills</h2>
+                <div>
+                    <label for="techSkills">Technical Skills (Comma-separated)</label>
+                    <input type="text" id="techSkills" placeholder="HTML, CSS, JavaScript, Responsive Design, Git" value="HTML, CSS, JavaScript, Responsive Design, Git">
+                </div>
+            </section>
+
+            <!-- Strengths -->
+            <section>
+                <h2 class="section-header">Strengths</h2>
+                <div>
+                    <label for="strengths">Your Strengths (Comma-separated)</label>
+                    <input type="text" id="strengths" placeholder="Adaptability, Problem-Solving, Teamwork, Dedicated" value="Adaptability, Problem-Solving, Teamwork, Dedicated, Basic Business Acumen">
+                </div>
+            </section>
+
+            <!-- Achievements -->
+            <section>
+                <h2 class="section-header">Achievements</h2>
+                <div class="input-box">
+                    <label for="achievements">Your Key Achievements (One per line)</label>
+                    <textarea id="achievements" rows="6" placeholder="Dean's List recipient for academic excellence...">Dean's List recipient for academic excellence in the 2023-2024 academic year.
+Successfully implemented a user authentication module for a demo project using HTML and JavaScript during internship.
+Led a team to organize a college tech event for over 150 students, managing logistics and promotion.</textarea>
+                </div>
+            </section>
+
+            <!-- Languages Known -->
+            <section>
+                <h2 class="section-header">Languages Known</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="lang1">Language 1</label>
+                        <input type="text" id="lang1" value="Tamil" required>
+                    </div>
+                    <div>
+                        <label for="proficiency1">Proficiency</label>
+                        <input type="text" id="proficiency1" value="Native" required>
+                    </div>
+                    <div>
+                        <label for="lang2">Language 2</label>
+                        <input type="text" id="lang2" value="English" required>
+                    </div>
+                    <div>
+                        <label for="proficiency2">Proficiency</label>
+                        <input type="text" id="proficiency2" value="Fluent" required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Referrals -->
+            <section>
+                <h2 class="section-header">Referrals (Optional)</h2>
+                <div class="input-box">
+                    <label for="referrals">Provide contact information for referrals, or state "Available upon request."</label>
+                    <textarea id="referrals" rows="4" placeholder="References available upon request." value="References available upon request."></textarea>
+                </div>
+            </section>
+
+            <!-- Declaration -->
+            <section>
+                <h2 class="section-header">Declaration</h2>
+                <div>
+                    <label for="place">Place</label>
+                    <input type="text" id="place" placeholder="Your City" value="Chennai" required>
+                </div>
+                <div>
+                    <label for="date">Date</label>
+                    <input type="text" id="date" value="" readonly>
+                </div>
+                <p class="text-sm text-stone-600 mt-4 italic">
+                    "I hereby declare that the above-mentioned information is correct to the best of my knowledge and belief."
+                </p>
+            </section>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" id="generatePdfBtn" class="bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-teal-700 transition-colors transform hover:scale-105 flex items-center justify-center mx-auto">
+                    <span id="buttonText">Generate PDF Resume</span>
+                    <span id="loadingSpinner" class="hidden animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full ml-3"></span>
+                </button>
+                <div id="message" class="mt-4 text-center text-red-600 hidden"></div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const { jsPDF } = window.jspdf;
+            const form = document.getElementById('resumeForm');
+            const generatePdfBtn = document.getElementById('generatePdfBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const buttonText = document.getElementById('buttonText');
+            const messageDiv = document.getElementById('message');
+
+            // Set current date for declaration
+            const today = new Date();
+            document.getElementById('date').value = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Basic validation
+                const requiredFields = document.querySelectorAll('#resumeForm [required]');
+                let allFilled = true;
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = 'red';
+                        allFilled = false;
+                    } else {
+                        field.style.borderColor = ''; // Reset border
+                    }
+                });
+
+                if (!allFilled) {
+                    messageDiv.textContent = 'Please fill in all required fields.';
+                    messageDiv.classList.remove('hidden');
+                    return;
+                } else {
+                    messageDiv.classList.add('hidden');
+                }
+
+                generatePdfBtn.disabled = true;
+                loadingSpinner.classList.remove('hidden');
+                buttonText.classList.add('hidden');
+                messageDiv.classList.add('hidden');
+
+                try {
+                    const doc = new jsPDF();
+                    let yPos = 20; // Initial Y position
+                    const margin = 20;
+                    const lineHeight = 7;
+                    const sectionSpacing = 12;
+                    const headingSize = 16;
+                    const subHeadingSize = 12;
+                    const bodySize = 10;
+                    const textColor = '#44403c'; // stone-700
+                    const accentColor = '#14b8a6'; // teal-500
+                    const pageHeight = doc.internal.pageSize.height - margin; // Bottom margin only, as top is handled by initial yPos
+
+                    // Helper function to add text safely (splits text if it's too long)
+                    // Returns the height consumed by the text
+                    const addMultiLineText = (text, x, y, options = {}) => {
+                        const defaultOptions = {
+                            maxWidth: 170, // Default width to wrap text
+                            lineHeight: lineHeight,
+                            fontSize: bodySize,
+                            textColor: textColor,
+                            fontStyle: 'normal'
+                        };
+                        const mergedOptions = { ...defaultOptions, ...options };
+
+                        doc.setFont(undefined, mergedOptions.fontStyle);
+                        doc.setFontSize(mergedOptions.fontSize);
+                        doc.setTextColor(mergedOptions.textColor);
+
+                        const splitText = doc.splitTextToSize(text, mergedOptions.maxWidth);
+                        doc.text(splitText, x, y);
+                        return splitText.length * mergedOptions.lineHeight;
+                    };
+
+                    // Helper to check for page break and add new page if needed
+                    // Returns new yPos
+                    const checkPageBreak = (currentY, minHeightNeeded = 0) => {
+                        if (currentY + minHeightNeeded > pageHeight) {
+                            doc.addPage();
+                            return margin; // Reset yPos for new page
+                        }
+                        return currentY;
+                    };
+
+
+                    // Header: Name and Contact Info
+                    const fullName = document.getElementById('fullName').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const phone = document.getElementById('phone').value.trim();
+                    const linkedin = document.getElementById('linkedin').value.trim();
+                    const portfolio = document.getElementById('portfolio').value.trim();
+
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(24);
+                    doc.setTextColor(accentColor);
+                    doc.text(fullName, margin, yPos);
+                    yPos += lineHeight * 2; // Extra space after name
+
+                    doc.setFont(undefined, 'normal');
+                    doc.setFontSize(bodySize);
+                    doc.setTextColor(textColor);
+
+                    let contactInfo = `${phone} | ${email}`;
+                    if (linkedin) contactInfo += ` | LinkedIn: ${linkedin}`;
+                    if (portfolio) contactInfo += ` | Portfolio: ${portfolio}`;
+
+                    yPos += addMultiLineText(contactInfo, margin, yPos, { maxWidth: 170, lineHeight: 5 });
+                    yPos += sectionSpacing;
+
+                    // Career Objective
+                    if (document.getElementById('objective').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 3); // Estimate for section header + some lines
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Career Objective', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'normal');
+                        yPos += addMultiLineText(document.getElementById('objective').value.trim(), margin, yPos);
+                        yPos += sectionSpacing;
+                    }
+
+                    // Education Qualification
+                    yPos = checkPageBreak(yPos, headingSize + lineHeight * 8); // Estimate for section header + multiple education items
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(headingSize);
+                    doc.setTextColor(accentColor);
+                    doc.text('Education Qualification', margin, yPos);
+                    yPos += lineHeight * 1.5;
+
+                    // Higher Education (Dynamic Degree)
+                    if (document.getElementById('degreeName').value.trim()) {
+                        yPos = checkPageBreak(yPos, subHeadingSize + lineHeight * 4); // Estimate for this education item
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(subHeadingSize);
+                        doc.setTextColor(textColor);
+                        let degreeLine = document.getElementById('degreeName').value.trim();
+                        if (document.getElementById('majorSpecialization').value.trim()) {
+                            degreeLine += ` (${document.getElementById('majorSpecialization').value.trim()})`;
+                        }
+                        doc.text(degreeLine, margin, yPos);
+                        yPos += lineHeight;
+
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.text(`${document.getElementById('university').value.trim()}, ${document.getElementById('graduation').value.trim()}`, margin, yPos);
+                        yPos += lineHeight;
+                        if (document.getElementById('coursework').value.trim()) {
+                            doc.text(`Relevant Coursework: ${document.getElementById('coursework').value.trim()}`, margin, yPos);
+                            yPos += lineHeight;
+                        }
+                        yPos += lineHeight;
+                    }
+
+                    // 12th Grade
+                    if (document.getElementById('12thSchool').value.trim()) {
+                        yPos = checkPageBreak(yPos, subHeadingSize + lineHeight * 3); // Estimate for this education item
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(subHeadingSize);
+                        doc.text(`Higher Secondary Certificate (12th Grade)`, margin, yPos);
+                        yPos += lineHeight;
+
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.text(`${document.getElementById('12thSchool').value.trim()}, ${document.getElementById('12thYear').value.trim()}`, margin, yPos);
+                        yPos += lineHeight;
+                        doc.text(`Aggregate Percentage/GPA: ${document.getElementById('12thMarks').value.trim()}`, margin, yPos);
+                        yPos += lineHeight * 2;
+                    }
+
+                    // 10th Grade
+                    if (document.getElementById('10thSchool').value.trim()) {
+                        yPos = checkPageBreak(yPos, subHeadingSize + lineHeight * 3); // Estimate for this education item
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(subHeadingSize);
+                        doc.text(`Secondary School Certificate (10th Grade)`, margin, yPos);
+                        yPos += lineHeight;
+
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.text(`${document.getElementById('10thSchool').value.trim()}, ${document.getElementById('10thYear').value.trim()}`, margin, yPos);
+                        yPos += lineHeight;
+                        doc.text(`Aggregate Percentage/GPA: ${document.getElementById('10thMarks').value.trim()}`, margin, yPos);
+                        yPos += sectionSpacing;
+                    }
+
+
+                    // Internship Experience
+                    if (document.getElementById('internCompany').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 6); // Estimate for section header + content
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Internship Experience', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(subHeadingSize);
+                        doc.setTextColor(textColor);
+                        doc.text(`${document.getElementById('internRole').value.trim()} - ${document.getElementById('internCompany').value.trim()}`, margin, yPos);
+                        yPos += lineHeight;
+
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.text(`${document.getElementById('internStart').value.trim()} – ${document.getElementById('internEnd').value.trim()}`, margin, yPos);
+                        yPos += lineHeight;
+
+                        const responsibilities = document.getElementById('internResponsibilities').value.trim().split('\n').filter(line => line.trim() !== '');
+                        if (responsibilities.length > 0) {
+                            responsibilities.forEach(res => {
+                                yPos = checkPageBreak(yPos, lineHeight); // Check for each bullet point
+                                yPos += addMultiLineText(`• ${res.trim()}`, margin + 5, yPos, { maxWidth: 170 }); // Indent bullet points
+                            });
+                        }
+                        yPos += sectionSpacing;
+                    }
+
+                    // Technical Skills
+                    if (document.getElementById('techSkills').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 2);
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Technical Skills', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'normal');
+                        yPos += addMultiLineText(document.getElementById('techSkills').value.trim(), margin, yPos);
+                        yPos += sectionSpacing;
+                    }
+
+                    // Strengths
+                    if (document.getElementById('strengths').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 2);
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Strengths', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'normal');
+                        yPos += addMultiLineText(document.getElementById('strengths').value.trim(), margin, yPos);
+                        yPos += sectionSpacing;
+                    }
+
+                    // Achievements
+                    const achievements = document.getElementById('achievements').value.trim().split('\n').filter(line => line.trim() !== '');
+                    if (achievements.length > 0) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * (achievements.length + 1)); // Estimate for all achievements
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Achievements', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'normal');
+                        achievements.forEach(ach => {
+                            yPos = checkPageBreak(yPos, lineHeight); // Check for each bullet point
+                            yPos += addMultiLineText(`• ${ach.trim()}`, margin + 5, yPos, { maxWidth: 170 });
+                        });
+                        yPos += sectionSpacing;
+                    }
+
+                    // Languages Known
+                    if (document.getElementById('lang1').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 3);
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Languages Known', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.text(`${document.getElementById('lang1').value.trim()} (${document.getElementById('proficiency1').value.trim()})`, margin, yPos);
+                        yPos += lineHeight;
+                        if (document.getElementById('lang2').value.trim()) {
+                            doc.text(`${document.getElementById('lang2').value.trim()} (${document.getElementById('proficiency2').value.trim()})`, margin, yPos);
+                            yPos += lineHeight;
+                        }
+                        yPos += sectionSpacing;
+                    }
+
+                    // Referrals
+                    if (document.getElementById('referrals').value.trim()) {
+                        yPos = checkPageBreak(yPos, headingSize + lineHeight * 4); // Added space for box
+                        doc.setFont(undefined, 'bold');
+                        doc.setFontSize(headingSize);
+                        doc.setTextColor(accentColor);
+                        doc.text('Referrals', margin, yPos);
+                        yPos += lineHeight * 1.5;
+
+                        const referralText = document.getElementById('referrals').value.trim();
+                        doc.setFont(undefined, 'normal');
+                        doc.setFontSize(bodySize);
+                        doc.setTextColor(textColor);
+
+                        const textStartX = margin + 5; // Slight indent for text within the box
+                        const textStartY = yPos + 2; // Slight padding from top of box
+                        const textWidth = 160; // Max width for referral text
+                        const textLines = doc.splitTextToSize(referralText, textWidth);
+                        const textHeight = textLines.length * lineHeight;
+
+                        const boxPadding = 5;
+                        const boxWidth = textWidth + (boxPadding * 2) + 5; // +5 for slight right margin
+                        const boxHeight = textHeight + (boxPadding * 2);
+                        const boxStartX = margin;
+                        const boxStartY = yPos;
+
+                        doc.setDrawColor(accentColor); // Set box border color
+                        doc.setLineWidth(0.5); // Set box line width
+                        doc.rect(boxStartX, boxStartY, boxWidth, boxHeight); // Draw the box
+
+                        doc.text(textLines, textStartX, textStartY + (lineHeight / 2)); // Adjusted Y for centering in box
+                        yPos += boxHeight + sectionSpacing; // Advance yPos by box height + spacing
+                    }
+
+                    // Declaration
+                    yPos = checkPageBreak(yPos, headingSize + lineHeight * 6); // Estimate for declaration
+                    doc.setFont(undefined, 'bold');
+                    doc.setFontSize(headingSize);
+                    doc.setTextColor(accentColor);
+                    doc.text('Declaration', margin, yPos);
+                    yPos += lineHeight * 1.5;
+
+                    doc.setFont(undefined, 'normal');
+                    doc.setFontSize(bodySize);
+                    yPos += addMultiLineText('I hereby declare that the above-mentioned information is correct to the best of my knowledge and belief.', margin, yPos);
+                    yPos += lineHeight * 2;
+
+                    doc.text(`Date: ${document.getElementById('date').value.trim()}`, margin, yPos);
+                    yPos += lineHeight;
+                    doc.text(`Place: ${document.getElementById('place').value.trim()}`, margin, yPos);
+                    yPos += lineHeight * 2;
+                    doc.text(fullName, margin, yPos); // Signature placeholder
+
+                    doc.save(`${fullName.replace(/\s/g, '_')}_Resume.pdf`);
+                    messageDiv.textContent = 'Resume generated successfully! It may contain multiple pages to ensure all details are included.';
+                    messageDiv.classList.remove('hidden');
+                    messageDiv.style.color = 'green';
+
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    messageDiv.textContent = `Error generating resume: ${error.message}`;
+                    messageDiv.classList.remove('hidden');
+                    messageDiv.style.color = 'red';
+                } finally {
+                    generatePdfBtn.disabled = false;
+                    loadingSpinner.classList.add('hidden');
+                    buttonText.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
